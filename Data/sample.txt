@@ -1,0 +1,4 @@
+1;a;a;1;1;"Chinese Beijing Chinese";b
+2;a;a;1;1;"Chinese Chinese Shanghai";b
+3;a;a;1;1;"Chinese Macao";b
+4;a;a;1;2;"Tokyo Japan Chinese";b
