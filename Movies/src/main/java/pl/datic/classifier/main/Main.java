@@ -15,8 +15,19 @@ import java.util.*;
 
 public class Main {
     public static void main(String [] args) throws InterruptedException {
-        /* Initialize context */
         SparkConf sparkConf = new SparkConf().setAppName("MovieSuggestions").setMaster("local");
+
+        /*
+        * NAIVE BAYES CLASSIFIER
+        * This part creates a Naive Bayes Classifier for movie reviews.
+        *
+        * A training set should contain
+        * - an integer example id,
+        * - text string (in this case review title from IMDB)
+        * - class (in this case 1-3 stars was mapped to BAD(1), 4-7 stars was mapped to MODERATE(2), 8-10 stars were mapped to GREAT(3) )
+        * Training data is prepared by the other script and dumped to csv file available locally
+        *
+        * */
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
         /* Prepare data */
@@ -71,11 +82,11 @@ public class Main {
                 })
                 .collectAsMap();
 
-        // Create a labeled vectors
+        // Create a labeled vectors and a classifier
         RDD<LabeledPoint> trainingSet = data.map(d -> d.toTrainingExample(dict, idfs)).rdd();
         NaiveBayesModel model = NaiveBayes.train(trainingSet);
 
-        // Predict
+        // Classifier can now be used to predict movie review
         TestDocument testDocMiddle = new TestDocument("terrible boring but great on the other hand");
         TestDocument testDocBad = new TestDocument("the worst movie ever");
         TestDocument testDocGreat = new TestDocument("pure awesome");
@@ -86,6 +97,16 @@ public class Main {
         System.out.println("Result for '"+testDocMiddle.toString()+"': "+result);
         result = model.predict(testDocGreat.vectorize(dict,idfs));
         System.out.println("Result for '"+testDocGreat.toString()+"': "+result);
+
+        /*
+        * TWITTER STREAMING
+        * This part creates a Twitter stream and queries for specified hashtag (movie hashtag like )
+        * and runs them through classifier to get a sense of what is the tweet sentiment
+        * Results are stored in txt file
+        * */
+
+        /* Todo Add Twitter streaming and push the tweets through classifier */
+
 
         /* Stop Spark */
         sc.stop();

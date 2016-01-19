@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.matosiuk</groupId>
-    <artifactId>movies</artifactId>
+    <groupId>pl.datic</groupId>
+    <artifactId>movie-tweets-classifier</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -17,6 +17,16 @@
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_2.10</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_2.10</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-twitter_2.10</artifactId>
             <version>1.6.0</version>
         </dependency>
     </dependencies>
