@@ -20,8 +20,7 @@ public class Main {
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
         /* Prepare data */
-        //String file = "/Users/bartosz/Development/movie-suggestions/Data/imdb-comments-20160113-1350-work.csv";
-        String file = "/Users/bartosz/Development/movie-suggestions/Data/sample.txt";
+        String file = "/Users/bartosz/Development/movie-suggestions/Data/imdb-comments-20160113-1350-work-ids.csv";
 
         // Load the documents
         JavaRDD<TrainingDocument> data = sc.textFile(file)
@@ -31,7 +30,7 @@ public class Main {
                 });
         data.cache();
         Double numDocs = (double) data.count();
-        Double idfThreshold = numDocs*0.01;
+        Double idfThreshold = numDocs*0.05;
 
         //Compute IDF
         JavaPairRDD<String,Double> terms2docs = data
@@ -61,9 +60,6 @@ public class Main {
         // Create a dictionary of all terms
         Map<String,Long> dict = terms2docs.map(Tuple2::_1).zipWithIndex().collectAsMap();
 
-        // Terms2docs is actually the binary TF
-        Map<String,Double> tfs = terms2docs.collectAsMap();
-
         // Filter and compute IDF
         Map<String,Double> idfs = terms2docs
                 // Filter the terms that are available only in very few document
@@ -75,16 +71,21 @@ public class Main {
                 })
                 .collectAsMap();
 
-        // Create TF-IDF labeled vectors
-        RDD<LabeledPoint> trainingSet = data.map(d -> d.toTrainingExample(dict, tfs, idfs)).rdd();
-
+        // Create a labeled vectors
+        RDD<LabeledPoint> trainingSet = data.map(d -> d.toTrainingExample(dict, idfs)).rdd();
         NaiveBayesModel model = NaiveBayes.train(trainingSet);
 
         // Predict
-        TestDocument testDoc = new TestDocument("Tokyo Japan");
-        System.out.println(testDoc.toString());
-        double result = model.predict(testDoc.vectorize(dict,tfs,idfs));
-        System.out.println("Result: "+result);
+        TestDocument testDocMiddle = new TestDocument("terrible boring but great on the other hand");
+        TestDocument testDocBad = new TestDocument("the worst movie ever");
+        TestDocument testDocGreat = new TestDocument("pure awesome");
+        double result;
+        result = model.predict(testDocBad.vectorize(dict,idfs));
+        System.out.println("Result for '"+testDocBad.toString()+"': "+result);
+        result = model.predict(testDocMiddle.vectorize(dict,idfs));
+        System.out.println("Result for '"+testDocMiddle.toString()+"': "+result);
+        result = model.predict(testDocGreat.vectorize(dict,idfs));
+        System.out.println("Result for '"+testDocGreat.toString()+"': "+result);
 
         /* Stop Spark */
         sc.stop();

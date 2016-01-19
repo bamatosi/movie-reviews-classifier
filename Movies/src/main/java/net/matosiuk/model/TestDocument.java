@@ -3,36 +3,40 @@ package net.matosiuk.model;
 import org.apache.spark.mllib.linalg.SparseVector;
 import org.apache.spark.mllib.linalg.Vector;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class TestDocument implements Document{
     private String document;
-    private HashSet<String> terms;
+    private ArrayList<String> terms;
+    private HashSet<String> termsDistinct;
 
     public TestDocument(String document) {
         this.document = document;
-        this.terms = new HashSet<String>(Arrays.asList(document.toLowerCase()
+        this.terms = new ArrayList<String>(Arrays.asList(document.toLowerCase()
                 .replaceAll("[^a-z0-9 ]+", "")
                 .replaceAll("^\"", "")
                 .replaceAll("$\"", "")
                 .split(" ")));
+        this.termsDistinct = new HashSet<String>(terms);
     }
 
     public HashSet<String> getTerms() {
-        return terms;
+        return termsDistinct;
     }
 
-    public Vector vectorize(Map<String,Long> dict, Map<String,Double> dictTF, Map<String,Double> dictIDF) {
+    public Double tf(String term) {
+        return (double) Collections.frequency(terms,term);
+    }
+
+    public Vector vectorize(Map<String,Long> dict, Map<String,Double> dictIDF) {
         HashMap<Integer,Double> terms = new HashMap<Integer,Double>();
-        System.out.println("Vectorize test doc: ");
         for (String term : getTerms()) {
-            // Long coming from Spark's zipWithIndex needs to be casted to Integer in here because of SparseVector requirements
             if (dict.containsKey(term)) {
-                terms.put(Math.toIntExact(dict.get(term)), dictTF.get(term) * dictIDF.get(term));
-                System.out.println("\t "+term+" ("+Math.toIntExact(dict.get(term))+") -> "+dictTF.get(term)+", "+dictIDF.get(term)+"="+dictTF.get(term)*dictIDF.get(term));
+                Double tfidf = tf(term); // To include IDF multiply by dictIDF.get(term)
+                if (tfidf>0) {
+                    // Long coming from Spark's zipWithIndex needs to be casted to Integer in here because of SparseVector requirements
+                    terms.put(Math.toIntExact(dict.get(term)), tfidf);
+                }
             } else {
                 System.out.println("Term "+term+" is not known in the model");
             }
@@ -54,10 +58,7 @@ public class TestDocument implements Document{
 
     @Override
     public String toString() {
-        return "TestDocument{" +
-                ", terms=" + terms +
-                ", document='" + document + '\'' +
-                '}';
+        return document;
     }
 
     @Override

@@ -10,17 +10,19 @@ public class TrainingDocument implements Document {
     private int docId;
     private String document;
     private String classLabel;
-    private HashSet<String> terms;
+    private ArrayList<String> terms;
+    private HashSet<String> termsDistinct;
 
     public TrainingDocument(int docId, String document, String classLabel) {
         this.docId = docId;
         this.document = document;
         this.classLabel = classLabel;
-        this.terms = new HashSet<String>(Arrays.asList(document.toLowerCase()
+        this.terms = new ArrayList<String>(Arrays.asList(document.toLowerCase()
                 .replaceAll("[^a-z0-9 ]+", "")
                 .replaceAll("^\"", "")
                 .replaceAll("$\"", "")
                 .split(" ")));
+        this.termsDistinct = new HashSet<String>(terms);
     }
 
     public int getDocId(){
@@ -32,16 +34,21 @@ public class TrainingDocument implements Document {
     }
 
     public HashSet<String> getTerms() {
-        return terms;
+        return termsDistinct;
     }
 
-    public Vector vectorize(Map<String,Long> dict, Map<String,Double> dictTF, Map<String,Double> dictIDF) {
+    public Double tf(String term) {
+        return (double) Collections.frequency(terms,term);
+    }
+
+    public Vector vectorize(Map<String,Long> dict, Map<String,Double> dictIDF) {
         HashMap<Integer,Double> terms = new HashMap<Integer,Double>();
-        System.out.println("Vectorize "+docId+"("+classLabel+")");
         for (String term : getTerms()) {
-            // Long coming from Spark's zipWithIndex needs to be casted to Integer in here because of SparseVector requirements
-            System.out.println("\t "+term+" ("+Math.toIntExact(dict.get(term))+") -> "+dictTF.get(term)+", "+dictIDF.get(term)+"="+dictTF.get(term)*dictIDF.get(term));
-            terms.put(Math.toIntExact(dict.get(term)), dictTF.get(term)*dictIDF.get(term));
+            Double tfidf = tf(term); // To include IDF multiply by dictIDF.get(term)
+            if (tfidf>0) {
+                // Long coming from Spark's zipWithIndex needs to be casted to Integer in here because of SparseVector requirements
+                terms.put(Math.toIntExact(dict.get(term)), tfidf);
+            }
         }
 
         // Convert ArrayList to primitives array required by SparseVector
@@ -58,9 +65,9 @@ public class TrainingDocument implements Document {
         return new SparseVector(dict.size(), termsIdsP, termsValsP);
     }
 
-    public LabeledPoint toTrainingExample(Map<String,Long> dict, Map<String,Double> dictTF, Map<String,Double> dictIDF) {
+    public LabeledPoint toTrainingExample(Map<String,Long> dict, Map<String,Double> dictIDF) {
         // Return a LabeledPoint containing a document class and SparseVector with TF-IDF product for a terms available in the specified document
-        return new LabeledPoint(Double.valueOf(getClassLabel()), vectorize(dict, dictTF, dictIDF));
+        return new LabeledPoint(Double.valueOf(getClassLabel()), vectorize(dict, dictIDF));
     }
 
     @Override
