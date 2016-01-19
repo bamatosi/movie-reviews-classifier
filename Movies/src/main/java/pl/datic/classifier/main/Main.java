@@ -1,7 +1,7 @@
-package net.matosiuk.main;
+package pl.datic.classifier.main;
 
-import net.matosiuk.model.TestDocument;
-import net.matosiuk.model.TrainingDocument;
+import pl.datic.classifier.model.TestDocument;
+import pl.datic.classifier.model.TrainingDocument;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;

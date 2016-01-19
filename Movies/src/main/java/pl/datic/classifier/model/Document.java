@@ -1,4 +1,4 @@
-package net.matosiuk.model;
+package pl.datic.classifier.model;
 
 import org.apache.spark.mllib.linalg.Vector;
 import java.util.HashSet;
