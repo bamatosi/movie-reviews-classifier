@@ -27,6 +27,7 @@ curl_setopt($curl, CURLOPT_TIMEOUT, 60);
 $fh = fopen ($outputFile, "w");
 
 /* Loop over IMDB listings too obtain comments */
+$id=0;
 foreach ($imdbStartingPoint as $imdbUrl) {
 	$result = getUrl($curl, $imdbUrl);
 	$movies = getMovies($result);
@@ -54,8 +55,9 @@ foreach ($imdbStartingPoint as $imdbUrl) {
 
 			foreach ($comments as $comment) {
 				/* Save only the comments having a declared rating */
-				saveComment($fh, $movieId, $commentUrlWithOffset, $comment['title'], $comment['comment'], $comment['rating'], $comment['comment-class']);
-				print "Saving comment for movie $movieId from $commentUrlWithOffset\n";
+				saveComment($fh, $id, $movieId, $commentUrlWithOffset, $comment['title'], $comment['comment'], $comment['rating'], $comment['comment-class']);
+				print "Saving comment $id for movie $movieId from $commentUrlWithOffset\n";
+				$id++;
 			}
 		}
 	}
@@ -147,8 +149,8 @@ function getComments($html, $url){
 	return $comments;
 }
 
-function saveComment($fh, $movieId, $commentsPage, $title, $comment, $rating, $class) {
-	$line = '"'.$movieId.'";"'.$commentsPage.'";'.$rating.';'.$class.';"'.$title.'";"'.$comment.'"'."\n";
+function saveComment($fh, $id, $movieId, $commentsPage, $title, $comment, $rating, $class) {
+	$line = $id.';"'.$movieId.'";"'.$commentsPage.'";'.$rating.';'.$class.';"'.$title.'";"'.$comment.'"'."\n";
 	fwrite($fh,$line);
 	return;
 }
