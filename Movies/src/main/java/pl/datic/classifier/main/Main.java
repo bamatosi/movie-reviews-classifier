@@ -31,7 +31,7 @@ public class Main {
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
         /* Prepare data */
-        String file = "/Users/bartosz/Development/movie-suggestions/Data/imdb-comments-20160113-1350-work-ids.csv";
+        String file = "/Users/bartosz/Development/movie-suggestions/Data/imdb-comments-20160119-1042.csv";
 
         // Load the documents
         JavaRDD<TrainingDocument> data = sc.textFile(file)

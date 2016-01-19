@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pl.datic</groupId>
-    <artifactId>movie-tweets-classifier</artifactId>
+    <artifactId>movie-reviews-classifier</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
