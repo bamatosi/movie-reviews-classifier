@@ -1,5 +1,5 @@
 # Movie Reviews Classifier
-This project uses Apache Spark's Naive Bayes implementation to classify movie reviews. 
+This is a showcase OS project utilising Apache Spark to classify movie reviews. The ultimate goal is figure out (in the real time) what is the reception of the particular movie among people using Twitter.
 
 ## Training set
 Training set can be aquired from freely available web pages and contains a set of movie reviews along with review rating (stars).
@@ -24,7 +24,8 @@ Result for 'pure awesome': 3.0 // GOOD review
 ## Roadmap
 Yes I have a roadmap for this project, why the heck not :).
 
-In the future I'm planning to
+- -Aquire training data (PHP script crawling for IMDB moview reviews)-
+- -Build, train and test classifier-
 - Add tokens stemming (like, likes, liked -> like)
 - Add support for negation by creating a negated tokens (isn't awesome -> not_awesome)
 - Include IDF factor, experiment with different implementations of TF factor (binary, augumented)
