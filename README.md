@@ -24,8 +24,8 @@ Result for 'pure awesome': 3.0 // GOOD review
 ## Roadmap
 Yes I have a roadmap for this project, why the heck not :).
 
-- -Aquire training data (PHP script crawling for IMDB moview reviews)-
-- -Build, train and test classifier-
+- ~~Aquire training data (PHP script crawling for IMDB moview reviews)~~
+- ~~Build, train and test classifier~~
 - Add tokens stemming (like, likes, liked -> like)
 - Add support for negation by creating a negated tokens (isn't awesome -> not_awesome)
 - Include IDF factor, experiment with different implementations of TF factor (binary, augumented)
