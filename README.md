@@ -17,9 +17,9 @@ Model is build with Spark's mllib. Inspect a code under /Movies/ to gain an unde
 I assumed that by using a training set large enought (I have tested it on ~55k reviews) the model can gain a pretty good distinction between GOOD and BAD sentiment which is my ultimate goal.
 
 *Sample output from the model* (for the ~55k training set obtained from IMDB):
-Result for 'the worst movie ever': 1.0 // BAD review
-Result for 'terrible boring but great on the other hand': 2.0 // MODERATE review
-Result for 'pure awesome': 3.0 // GOOD review
+- Result for 'the worst movie ever': 1.0 // BAD review
+- Result for 'terrible boring but great on the other hand': 2.0 // MODERATE review
+- Result for 'pure awesome': 3.0 // GOOD review
 
 ## Roadmap
 Yes I have a roadmap for this project, why the heck not :).
